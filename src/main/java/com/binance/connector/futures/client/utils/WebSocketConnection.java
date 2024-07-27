@@ -23,9 +23,14 @@ public class WebSocketConnection extends WebSocketListener {
     private final Request request;
     private final String streamName;
 
+    volatile long lastReceivedTime = System.currentTimeMillis();
     private WebSocket webSocket;
 
     private final Object mutex;
+
+    public long getLastReceivedTime() {
+        return lastReceivedTime;
+    }
 
     public WebSocketConnection(
             WebSocketCallback onOpenCallback,
@@ -45,6 +50,7 @@ public class WebSocketConnection extends WebSocketListener {
         this.mutex = new Object();
     }
 
+
     public void connect() {
         synchronized (mutex) {
             if (null == webSocket) {
@@ -59,12 +65,15 @@ public class WebSocketConnection extends WebSocketListener {
     public int getConnectionId() {
         return connectionId;
     }
-
+    public String getStreamName() {
+        return streamName;
+    }
 
     public void close() {
         if (null != webSocket) {
             logger.info("[Connection {}] Closing connection to {}", connectionId, streamName);
             webSocket.close(NORMAL_CLOSURE_STATUS, null);
+            webSocket = null;
         }
     }
 
@@ -83,6 +92,7 @@ public class WebSocketConnection extends WebSocketListener {
     @Override
     public void onMessage(WebSocket ws, String text) {
         onMessageCallback.onReceive(text);
+        lastReceivedTime = System.currentTimeMillis();
     }
 
     @Override
