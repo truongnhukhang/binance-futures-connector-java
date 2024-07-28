@@ -148,6 +148,19 @@ public abstract class Account {
         return requestHandler.sendSignedRequest(productUrl, ORDER, parameters, HttpMethod.POST, showLimitUsage);
     }
 
+    private final String TEST_ORDER = "/v1/order/test";
+
+    /**
+     * Same with newOrder but for testing
+     * @param parameters
+     * @return
+     */
+    public String newTestOrder(LinkedHashMap<String, Object> parameters) {
+        ParameterChecker.checkParameter(parameters, "symbol", String.class);
+        ParameterChecker.checkParameter(parameters, "side", String.class);
+        ParameterChecker.checkParameter(parameters, "type", String.class);
+        return requestHandler.sendSignedRequest(productUrl, TEST_ORDER, parameters, HttpMethod.POST, showLimitUsage);
+    }
     private final String BATCH_ORDERS = "/v1/batchOrders";
     /**
      * Send in a new order.

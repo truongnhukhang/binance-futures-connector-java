@@ -55,10 +55,31 @@ public abstract class WebsocketClientImpl implements WebsocketClient {
                     connection.connect();
                 }
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, 5, TimeUnit.MINUTES);
     }
 
+    public WebsocketClientImpl(String baseUrl,int timeReconnectIfNoMessage) {
+        this.baseUrl = baseUrl;
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
+            for (Map.Entry<Integer, WebSocketConnection> entry : connections.entrySet()) {
+                WebSocketConnection connection = entry.getValue();
+                Instant lastReceiveTime = Instant.ofEpochMilli(connection.getLastReceivedTime());
+                Instant currentTime = Instant.now();
+                if (lastReceiveTime.plusSeconds(timeReconnectIfNoMessage).isBefore(currentTime)) {
+                    logger.info("Connection {}-{} is not receiving any message for 30 seconds, try to reconnect it",
+                                entry.getKey(),
+                                connection.getStreamName());
+                    connection.close();
+                    connection.connect();
+                }
+            }
+        }, 0, 5, TimeUnit.MINUTES);
+    }
+
+
+
     public void close() throws InterruptedException {
+        this.scheduledExecutorService.shutdown();
         this.scheduledExecutorService.awaitTermination(5, TimeUnit.SECONDS);
     }
 
