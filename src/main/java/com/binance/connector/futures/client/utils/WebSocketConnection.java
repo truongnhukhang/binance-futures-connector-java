@@ -91,7 +91,7 @@ public class WebSocketConnection extends WebSocketListener {
     public void onMessage(WebSocket ws, String text) {
         onMessageCallback.onReceive(text);
         lastReceivedTime = System.currentTimeMillis();
-        logger.info("[Connection {}] Received message: {}, {}", streamName, text, Instant.ofEpochMilli(lastReceivedTime));
+        logger.debug("[Connection {}] Received message: {}, {}", streamName, text, Instant.ofEpochMilli(lastReceivedTime));
     }
 
     @Override
