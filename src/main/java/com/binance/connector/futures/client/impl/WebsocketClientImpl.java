@@ -56,6 +56,16 @@ public abstract class WebsocketClientImpl implements WebsocketClient {
                 }
             }
         }, 0, 5, TimeUnit.MINUTES);
+        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
+            Iterator<Map.Entry<Integer, WebSocketConnection>> iterator = connections.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Integer, WebSocketConnection> entry = iterator.next();
+                WebSocketConnection connection = entry.getValue();
+                logger.info("Reset connection {}-{} after each 2 hours", entry.getKey(), connection.getStreamName());
+                connection.close();
+                connection.connect();
+            }
+        }, 0, 2, TimeUnit.HOURS);
     }
 
     public WebsocketClientImpl(String baseUrl,int timeReconnectIfNoMessage) {
@@ -74,6 +84,16 @@ public abstract class WebsocketClientImpl implements WebsocketClient {
                 }
             }
         }, 0, 5, TimeUnit.MINUTES);
+        this.scheduledExecutorService.scheduleAtFixedRate(() -> {
+            Iterator<Map.Entry<Integer, WebSocketConnection>> iterator = connections.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Integer, WebSocketConnection> entry = iterator.next();
+                WebSocketConnection connection = entry.getValue();
+                logger.info("Reset connection {}-{} after each 2 hours", entry.getKey(), connection.getStreamName());
+                connection.close();
+                connection.connect();
+            }
+        }, 0, 2, TimeUnit.HOURS);
     }
 
 

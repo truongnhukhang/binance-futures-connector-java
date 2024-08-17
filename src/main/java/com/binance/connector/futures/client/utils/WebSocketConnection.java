@@ -96,7 +96,7 @@ public class WebSocketConnection extends WebSocketListener {
 
     @Override
     public void onFailure(WebSocket ws, Throwable t, Response response) {
-        logger.error("[Connection {}] Failure", connectionId, t);
+        logger.error("[Connection {}] Failure : {}", connectionId,response, t);
         onFailureCallback.onReceive(streamName);
     }
 }
